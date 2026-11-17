@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valugen — UK Distributor of Vitamins &amp; Supplements</title>
+  <meta name="description" content="Valugen is a UK distributor of vitamins, food supplements and everyday healthcare products, supplying pharmacies and retailers." />
+  <!-- Temporary favicon: replace with the logo (Image 1) later -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b7a75'/%3E%3Cpath d='M16 9v14M9 16h14' stroke='white' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+       Structure from Stripe (thin display type, mesh hero, pill CTA,
+       hairline cards). Warmth from PostHog (cream interlude, bordered
+       friendly cards). Indigo swapped for a healthcare teal.
+       ============================================================ */
+    :root {
+      --primary: #0b7a75;        /* teal — single CTA colour */
+      --primary-press: #075a56;
+      --primary-soft: #d8f0ec;
+      --ink: #0d253d;            /* deep navy body text */
+      --ink-2: #273951;
+      --mute: #5d6b80;
+      --canvas: #ffffff;
+      --canvas-soft: #f6f9fc;
+      --cream: #f7f1e6;
+      --hairline: #e3e8ee;
+      --hairline-input: #b8cbdc;
+      --mesh-1: #c9f0e4;         /* mint */
+      --mesh-2: #bfe3f7;         /* sky */
+      --mesh-3: #dcd6fb;         /* lavender */
+      --mesh-4: #fbe6cf;         /* cream-peach */
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --pill: 9999px;
+      --shadow-1: 0 1px 3px rgba(0, 55, 112, .08);
+      --shadow-2: 0 8px 24px rgba(0, 55, 112, .08), 0 2px 6px rgba(0, 55, 112, .04);
+      --container: 1160px;
+      --nav-h: 72px;
+      --nav-bg: #0a3540;         /* deep teal-navy header behind the white logo */
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--canvas);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: var(--primary); text-decoration: none; }
+    section { scroll-margin-top: var(--nav-h); }
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+
+    /* ---------- type ---------- */
+    h1, h2, h3 { font-weight: 300; margin: 0; color: var(--ink); }
+    h1 { font-size: clamp(36px, 5.2vw, 56px); line-height: 1.05; letter-spacing: -0.025em; }
+    h2 { font-size: clamp(30px, 3.8vw, 44px); line-height: 1.12; letter-spacing: -0.02em; }
+    h3 { font-size: 20px; line-height: 1.3; letter-spacing: -0.01em; font-weight: 400; }
+    .lead { font-size: 18px; color: var(--ink-2); font-weight: 300; max-width: 560px; }
+    .eyebrow {
+      display: inline-block; font-size: 12px; font-weight: 500; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 14px;
+    }
+    .muted { color: var(--mute); }
+
+    /* ---------- buttons ---------- */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: var(--pill); font: 500 15px/1 "Inter", sans-serif;
+      border: 1px solid transparent; cursor: pointer; transition: background .15s, color .15s, border-color .15s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-press); }
+    .btn-secondary { background: transparent; color: var(--primary); border-color: var(--primary); }
+    .btn-secondary:hover { background: var(--primary-soft); }
+
+    /* ---------- image placeholders ---------- */
+    .ph {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 4px; text-align: center;
+      background: repeating-linear-gradient(45deg, #f1f4f8, #f1f4f8 10px, #eaeef3 10px, #eaeef3 20px);
+      border: 1.5px dashed #9fb1c6; border-radius: var(--radius-lg); color: #4b5d73;
+    }
+    .ph strong { font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+    .ph span { font-size: 12px; color: var(--mute); }
+
+    /* ============================================================
+       NAV
+       ============================================================ */
+    /* Dark header so the white Valugen logo stands out */
+    .nav {
+      position: sticky; top: 0; z-index: 50; height: var(--nav-h);
+      background: var(--nav-bg);
+      border-bottom: 1px solid rgba(255,255,255,.08); transition: box-shadow .2s;
+    }
+    .nav.scrolled { box-shadow: 0 6px 20px rgba(6, 30, 40, .25); }
+    .nav .container { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .logo { display: flex; align-items: center; flex: none; }
+    .logo img { height: 46px; width: auto; }
+    .nav-links { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+    .nav-links a {
+      display: block; padding: 8px 14px; white-space: nowrap; border-radius: var(--pill);
+      color: rgba(255,255,255,.78); font-size: 15px; transition: background .15s, color .15s;
+    }
+    .nav-links a:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-links a.active { color: #fff; background: rgba(255,255,255,.14); }
+    .nav-cta { padding: 10px 18px; font-size: 14px; background: #fff; color: var(--nav-bg); }
+    .nav-cta:hover { background: var(--mesh-1); }
+    .menu-toggle {
+      display: none; background: none; border: 1px solid rgba(255,255,255,.25); border-radius: var(--radius-md);
+      width: 42px; height: 42px; cursor: pointer; align-items: center; justify-content: center;
+    }
+    .menu-toggle span, .menu-toggle span::before, .menu-toggle span::after {
+      display: block; width: 18px; height: 1.5px; background: #fff; position: relative; transition: .2s;
+    }
+    .menu-toggle span::before, .menu-toggle span::after { content: ""; position: absolute; left: 0; }
+    .menu-toggle span::before { top: -6px; }
+    .menu-toggle span::after { top: 6px; }
+    .nav.open .menu-toggle span { background: transparent; }
+    .nav.open .menu-toggle span::before { top: 0; transform: rotate(45deg); }
+    .nav.open .menu-toggle span::after { top: 0; transform: rotate(-45deg); }
+
+    /* ============================================================
+       HERO — soft mesh gradient backdrop
+       ============================================================ */
+    .hero { position: relative; overflow: hidden; padding: 72px 0 96px; }
+    .mesh {
+      position: absolute; inset: -120px -10% auto -10%; height: 620px; z-index: -1;
+      filter: blur(60px); opacity: .9;
+    }
+    .mesh i { position: absolute; border-radius: 50%; }
+    .mesh i:nth-child(1) { width: 520px; height: 380px; left: 4%;  top: 60px;  background: var(--mesh-1); }
+    .mesh i:nth-child(2) { width: 560px; height: 420px; left: 34%; top: 0;     background: var(--mesh-2); }
+    .mesh i:nth-child(3) { width: 480px; height: 360px; left: 62%; top: 90px;  background: var(--mesh-3); }
+    .mesh i:nth-child(4) { width: 420px; height: 300px; left: 80%; top: 10px;  background: var(--mesh-4); }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+    .hero h1 { margin-bottom: 22px; }
+    .hero .lead { margin: 0 0 32px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    /* Hero and About feature images */
+    .feature-img {
+      width: 100%; height: auto; aspect-ratio: 1402 / 1122; object-fit: cover;
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-2); background: var(--canvas-soft);
+    }
+    .trust-row {
+      display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 36px; padding: 0; list-style: none;
+      font-size: 14px; color: var(--ink-2);
+    }
+    .trust-row li { display: flex; align-items: center; gap: 8px; }
+    .trust-row svg { flex: none; }
+
+    /* ============================================================
+       SECTIONS
+       ============================================================ */
+    .band { padding: 96px 0; }
+    .band-soft { background: var(--canvas-soft); }
+    .band-cream { background: var(--cream); }
+    .section-head { max-width: 640px; margin-bottom: 48px; }
+    .section-head h2 { margin-bottom: 16px; }
+    .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+    .section-head.center .lead { margin: 0 auto; }
+
+    /* About */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .about-copy p { color: var(--ink-2); margin: 0 0 16px; }
+    .values { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+    .value { border-top: 1px solid var(--hairline); padding-top: 14px; }
+    .value b { display: block; font-weight: 500; margin-bottom: 4px; }
+    .value span { font-size: 14px; color: var(--mute); }
+
+    /* Products */
+    .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .product-card {
+      background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--radius-lg);
+      overflow: hidden; transition: box-shadow .2s, transform .2s;
+    }
+    .product-card:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); }
+    .product-card { display: flex; flex-direction: column; }
+    .product-media {
+      aspect-ratio: 1 / 1; background: #fff; border-bottom: 1px solid var(--hairline);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .product-media img { width: 100%; height: 100%; object-fit: contain; transition: transform .3s; }
+    .product-media img.tall { padding: 24px 0; }
+    .product-card:hover .product-media img { transform: scale(1.03); }
+    .product-body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+    .product-body .tags { margin-top: auto; }
+    .brand { font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); margin-bottom: 6px; }
+    .product-body h3 { margin-bottom: 8px; }
+    .tag.own { background: var(--nav-bg); color: #fff; }
+    .product-body p { margin: 0 0 14px; font-size: 15px; color: var(--mute); }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-size: 12px; padding: 4px 10px; border-radius: var(--pill);
+      background: var(--primary-soft); color: var(--primary-press);
+    }
+    .note { margin-top: 28px; font-size: 14px; color: var(--mute); text-align: center; }
+
+    /* Quality */
+    .quality-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .q-card {
+      background: var(--canvas); border: 1px solid #e8dfcf; border-radius: var(--radius-lg); padding: 28px 24px;
+    }
+    .q-icon {
+      width: 44px; height: 44px; border-radius: 10px; background: var(--primary-soft);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+    }
+    .q-card h3 { margin-bottom: 8px; font-size: 18px; }
+    .q-card p { margin: 0; font-size: 15px; color: var(--mute); }
+
+    /* Partners */
+    .partner-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .partner {
+      border: 1px solid var(--hairline); border-radius: var(--radius-lg); padding: 32px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .partner p { margin: 0; color: var(--mute); }
+    .partner a { font-weight: 500; margin-top: 6px; }
+
+    /* FAQ */
+    .faq-wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 64px; align-items: start; }
+    .faq-list { border-top: 1px solid var(--hairline); }
+    .faq-list details { border-bottom: 1px solid var(--hairline); }
+    .faq-list summary {
+      list-style: none; cursor: pointer; padding: 20px 40px 20px 0; position: relative;
+      font-size: 17px; font-weight: 400; color: var(--ink);
+    }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after {
+      content: "+"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+      font-size: 22px; font-weight: 300; color: var(--primary); transition: transform .2s;
+    }
+    .faq-list details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+    .faq-list summary:hover { color: var(--primary); }
+    .faq-list details p { margin: 0 0 20px; color: var(--ink-2); max-width: 620px; }
+
+    /* Contact */
+    .contact-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; }
+    .contact-info { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 20px; }
+    .contact-info li { display: flex; gap: 14px; }
+    .contact-info .q-icon { margin: 0; width: 40px; height: 40px; flex: none; }
+    .contact-info b { display: block; font-weight: 500; }
+    .contact-info span { color: var(--mute); font-size: 15px; }
+    form.card {
+      background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--radius-lg);
+      padding: 32px; box-shadow: var(--shadow-1);
+    }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+    label { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+    label .opt { font-weight: 400; color: var(--mute); }
+    input, select, textarea {
+      font: 400 15px/1.4 "Inter", sans-serif; color: var(--ink);
+      padding: 11px 12px; border: 1px solid var(--hairline-input); border-radius: var(--radius-sm);
+      background: var(--canvas); width: 100%; transition: border-color .15s, box-shadow .15s;
+    }
+    textarea { min-height: 130px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft);
+    }
+    .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--mute); margin-bottom: 22px; }
+    .consent input { width: auto; margin-top: 3px; }
+    .form-status { margin-top: 14px; font-size: 14px; display: none; }
+    .form-status.ok { display: block; color: var(--primary-press); }
+    .form-status.err { display: block; color: #b42318; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--hairline); padding: 56px 0 32px; font-size: 14px; color: var(--mute); }
+    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    footer h4 { font-size: 13px; font-weight: 500; color: var(--ink); margin: 0 0 12px; text-transform: uppercase; letter-spacing: .06em; }
+    footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    footer a { color: var(--mute); }
+    footer a:hover { color: var(--primary); }
+    /* white logo recoloured dark for the light footer */
+    .footer-logo { margin-bottom: 14px; }
+    .footer-logo img { height: 42px; width: auto; filter: brightness(0); opacity: .82; }
+    .disclaimer {
+      border-top: 1px solid var(--hairline); padding-top: 24px; font-size: 12.5px; line-height: 1.6;
+      display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    }
+    .disclaimer p { margin: 0; max-width: 720px; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1024px) {
+      .quality-grid { grid-template-columns: repeat(2, 1fr); }
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 980px) {
+      .menu-toggle { display: inline-flex; }
+      .nav-cta { display: none; }
+      .nav-links {
+        position: absolute; top: var(--nav-h); left: 0; right: 0; flex-direction: column; gap: 0;
+        background: var(--nav-bg); border-bottom: 1px solid rgba(255,255,255,.1); padding: 8px 16px 16px;
+        display: none;
+      }
+      .nav.open .nav-links { display: flex; }
+      .nav-links a { padding: 12px 14px; }
+      .hero { padding: 40px 0 72px; }
+      .hero-grid, .about-grid, .contact-grid, .partner-strip, .faq-wrap { grid-template-columns: 1fr; gap: 40px; }
+      .faq-wrap .section-head { margin-bottom: 0; }
+      .band { padding: 72px 0; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      /* 16px stops iPhone Safari zooming in when a form field is tapped */
+      input, select, textarea { font-size: 16px; }
+      /* larger tap targets (min ~44px) */
+      .partner a, footer ul a { display: inline-block; padding: 10px 0; }
+      footer ul { gap: 0; }
+    }
+    @media (max-width: 560px) {
+      .container { padding: 0 16px; }
+      .product-grid, .quality-grid, .values, .field-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      form.card { padding: 22px; }
+    }
+
+    /* Scroll reveal: slide-in animations (added by JS so content stays visible without it) */
+    .reveal {
+      opacity: 0;
+      transform: translate3d(var(--rx, 0), var(--ry, 36px), 0);
+      transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+      transition-delay: var(--rd, 0s);
+      will-change: opacity, transform;
+    }
+    .reveal.from-left  { --rx: -56px; --ry: 0; }
+    .reveal.from-right { --rx: 56px;  --ry: 0; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= NAV ================= -->
+  <header class="nav" id="nav">
+    <div class="container">
+      <a href="#home" class="logo" aria-label="Valugen home">
+        <img src="images/valugen-logo-white.png" alt="Valugen" width="79" height="46" />
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#quality">Quality</a></li>
+        <li><a href="#partners">Partner with us</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="#contact" class="btn btn-primary nav-cta">Get in touch</a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><span></span></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="home">
+      <div class="mesh" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">UK health &amp; wellness distribution</span>
+          <h1>Trusted health brands, reliably supplied.</h1>
+          <p class="lead">Valugen is a UK distributor of vitamins, food supplements and everyday healthcare products. We source from trusted manufacturers and keep pharmacies and retailers stocked with the essentials their customers rely on.</p>
+          <div class="hero-actions">
+            <a href="#products" class="btn btn-primary">See our range</a>
+            <a href="#contact" class="btn btn-secondary">Become a stockist</a>
+          </div>
+          <ul class="trust-row">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Products compliant for sale in the UK</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Sourced from authorised manufacturers</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Dependable, competitive supply</li>
+          </ul>
+        </div>
+        <img class="feature-img" src="images/hero-range-blue.webp" width="1402" height="1122"
+             alt="Pharmalinea Hydramin+ Creatine Sticks, VITY Vitamin D3 and VPLab L-Carnitine 3000 on a display stand" />
+      </div>
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+    <section class="band band-soft" id="about">
+      <div class="container about-grid">
+        <img class="feature-img" src="images/hero-range-orange.webp" width="1402" height="1122" loading="lazy"
+             alt="Valugen Vitamin C + Zinc Chewable Tablets and Candipure capsules on a display stand" />
+        <div class="about-copy">
+          <span class="eyebrow">About Valugen</span>
+          <h2>The link between trusted brands and your shelves.</h2>
+          <p style="margin-top:20px">Valugen is a UK reseller and distributor of vitamins, supplements and everyday healthcare products. We work with trusted brands, and offer a range under our own Valugen name. Our job is to source products from authorised manufacturers and get them to the pharmacies and retailers who need them, quickly and reliably.</p>
+          <p>Every product we supply meets UK requirements for sale, is stored and handled with care, and traceable from the manufacturer to your shelf.</p>
+          <div class="values">
+            <div class="value"><b>Reliability</b><span>Consistent stock you can plan around.</span></div>
+            <div class="value"><b>Trust</b><span>Compliant products from authorised sources.</span></div>
+            <div class="value"><b>Access</b><span>Getting everyday health essentials where they're needed.</span></div>
+            <div class="value"><b>Value</b><span>Competitive pricing for our partners.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PRODUCTS ================= -->
+    <section class="band" id="products">
+      <div class="container">
+        <div class="section-head center">
+          <span class="eyebrow">Our range</span>
+          <h2>Vitamins and supplements we supply.</h2>
+          <p class="lead">A selection of the brands we distribute to pharmacies and retailers across the UK, alongside our own Valugen range.</p>
+        </div>
+
+        <div class="product-grid">
+          <article class="product-card">
+            <div class="product-media"><img class="tall" src="images/vity-vitamin-d3.webp" alt="VITY Vitamin D3 1000iu raspberry chewable tablets, 30-tablet tub" width="381" height="597" loading="lazy" /></div>
+            <div class="product-body">
+              <div class="brand">VITY</div>
+              <h3>Vitamin D3 1000iu Chewable Tablets</h3>
+              <p>Raspberry-flavoured chewable tablets with 1000iu (25µg) of vitamin D3 in each. Vitamin D contributes to the normal function of the immune system. Made in the UK.</p>
+              <div class="tags"><span class="tag">Chewable</span><span class="tag">30 tablets</span></div>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-media"><img src="images/pharmalinea-hydramin-creatine-white.jpg" alt="Pharmalinea Hydramin+ Creatine Sticks box and single stick sachet" width="448" height="448" loading="lazy" /></div>
+            <div class="product-body">
+              <div class="brand">Pharmalinea</div>
+              <h3>Hydramin+ Creatine Sticks</h3>
+              <p>Hydration and creatine in convenient single-serve sticks for adults. Easy to carry and quick to take on the go.</p>
+              <div class="tags"><span class="tag">Sticks</span><span class="tag">30 per box</span><span class="tag">Adults</span></div>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-media"><img src="images/vplab-l-carnitine-3000.webp" alt="VPLab L-Carnitine 3000 box with two 25ml drink vials" width="1000" height="1000" loading="lazy" /></div>
+            <div class="product-body">
+              <div class="brand">VPLab</div>
+              <h3>L-Carnitine 3000 Liquid Shots</h3>
+              <p>Ready-to-drink 25ml vials, each with 3000mg of L-carnitine. Citrus flavour, fat free and sugar free.</p>
+              <div class="tags"><span class="tag">Liquid</span><span class="tag">7 × 25ml</span></div>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-media"><img src="images/valugen-vitamin-c-zinc-white.jpg" alt="Valugen Vitamin C + Zinc orange-flavoured chewable tablets, 30-tablet tub" width="400" height="400" loading="lazy" /></div>
+            <div class="product-body">
+              <div class="brand">Valugen</div>
+              <h3>Vitamin C + Zinc Chewable Tablets</h3>
+              <p>Orange-flavoured chewable tablets combining vitamin C and zinc, which both contribute to the normal function of the immune system.</p>
+              <div class="tags"><span class="tag own">Valugen range</span><span class="tag">Chewable</span><span class="tag">30 tablets</span></div>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-media"><img src="images/candipure.webp" alt="Candipure food supplement, 60-capsule bottle" width="713" height="713" loading="lazy" /></div>
+            <div class="product-body">
+              <div class="brand">Candipure</div>
+              <h3>Candipure Capsules</h3>
+              <p>A food supplement the manufacturer describes as creating an inhospitable environment for problem yeast. Suitable for vegetarians.</p>
+              <div class="tags"><span class="tag">Capsules</span><span class="tag">60 capsules</span></div>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-media"><img src="images/bladapure.avif" alt="Bladapure D-Mannose formula, 120-capsule value pack bottle" width="724" height="724" loading="lazy" /></div>
+            <div class="product-body">
+              <div class="brand">Bladapure</div>
+              <h3>Bladapure D-Mannose Capsules</h3>
+              <p>A D-Mannose formula with key nutrients to maintain normal electrolyte balance and acid-base metabolism.</p>
+              <div class="tags"><span class="tag">Capsules</span><span class="tag">120 capsules</span><span class="tag">Value pack</span></div>
+            </div>
+          </article>
+        </div>
+        <p class="note">Product images are for illustration only and nothing is sold through this website. Brand names and trademarks belong to their respective owners.</p>
+      </div>
+    </section>
+
+    <!-- ================= QUALITY ================= -->
+    <section class="band band-cream" id="quality">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Why Valugen</span>
+          <h2>A supply chain you can trust.</h2>
+        </div>
+        <div class="quality-grid">
+          <div class="q-card">
+            <div class="q-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="1.8"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <h3>Compliant products</h3>
+            <p>Every product we supply meets UK requirements for sale.</p>
+          </div>
+          <div class="q-card">
+            <div class="q-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="1.8"><path d="M3 9 12 4l9 5v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M8 20v-6h8v6"/></svg></div>
+            <h3>Careful handling</h3>
+            <p>Stock is stored and transported to protect quality, from warehouse to shelf.</p>
+          </div>
+          <div class="q-card">
+            <div class="q-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div>
+            <h3>Full traceability</h3>
+            <p>Batch records let every product be traced back to its manufacturer.</p>
+          </div>
+          <div class="q-card">
+            <div class="q-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="1.8"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg></div>
+            <h3>Dependable supply</h3>
+            <p>Consistent stock and competitive pricing for our trade partners.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PARTNERS ================= -->
+    <section class="band" id="partners">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Partner with us</span>
+          <h2>Working together for healthier communities.</h2>
+        </div>
+        <div class="partner-strip">
+          <div class="partner">
+            <h3>Pharmacies &amp; retailers</h3>
+            <p>Stock a reliable, competitively priced vitamins and supplements range your customers will come back for. We support you with consistent supply and clear product information.</p>
+            <a href="#contact">Become a stockist →</a>
+          </div>
+          <div class="partner">
+            <h3>Manufacturers &amp; brands</h3>
+            <p>Looking for a UK distribution partner for your health and wellness products? Let's talk about getting your range in front of more pharmacies and retailers.</p>
+            <a href="#contact">Talk to our team →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="band band-soft" id="faq">
+      <div class="container faq-wrap">
+        <div class="section-head">
+          <span class="eyebrow">FAQ</span>
+          <h2>Frequently asked questions.</h2>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>Does Valugen make its own products?</summary>
+            <p>Valugen is a reseller and distributor. Alongside trusted third-party brands, we offer a range under our own Valugen name. Products are sourced from authorised manufacturers and supplied to pharmacies and retailers across the UK. The manufacturer or distributor is named on every pack.</p>
+          </details>
+          <details>
+            <summary>Are the products you supply approved for sale in the UK?</summary>
+            <p>Yes. Every product we supply meets the UK requirements that apply to it. Our current range is food supplements, which are labelled and sold in line with UK food supplement rules.</p>
+          </details>
+          <details>
+            <summary>Can I buy products directly from this website?</summary>
+            <p>No. This website is for information only and nothing is sold through it. Our products are available through our pharmacy and retail partners.</p>
+          </details>
+          <details>
+            <summary>Who do you supply?</summary>
+            <p>We work with independent and chain pharmacies, retailers and other trade customers. If you'd like to stock our range, get in touch using the form below.</p>
+          </details>
+          <details>
+            <summary>How do I become a stockist?</summary>
+            <p>Send us a message using the contact form and choose "Becoming a stockist". A member of our team will get back to you with next steps and our current range.</p>
+          </details>
+          <details>
+            <summary>I'm a manufacturer. Can Valugen distribute my products?</summary>
+            <p>We're always interested in hearing from manufacturers of vitamins, supplements and healthcare products. Contact us with details of your range and we'll be in touch.</p>
+          </details>
+          <details>
+            <summary>I have a question about a medicine or a possible side effect. Who should I contact?</summary>
+            <p>For advice about a medicine, speak to your pharmacist or GP. For urgent medical help, call NHS 111 or 999 in an emergency. You can report a suspected side effect through the <a href="https://yellowcard.mhra.gov.uk/" target="_blank" rel="noopener">MHRA Yellow Card scheme</a>.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CONTACT ================= -->
+    <section class="band" id="contact">
+      <div class="container contact-grid">
+        <div>
+          <span class="eyebrow">Contact us</span>
+          <h2>We'd love to hear from you.</h2>
+          <p class="lead" style="margin-top:16px">Questions about our range, becoming a stockist or distribution? Send us a message and we'll get back to you.</p>
+          <ul class="contact-info">
+            <li>
+              <div class="q-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+              <div><b>Email</b><span>hello@valugen.example</span></div>
+            </li>
+            <li>
+              <div class="q-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg></div>
+              <div><b>Phone</b><span>+44 (0)00 0000 0000</span></div>
+            </li>
+            <li>
+              <div class="q-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="1.8"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div><b>Address</b><span>Address line, Town, Postcode, United Kingdom</span></div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- FORMSPREE: replace YOUR_FORM_ID with the ID from formspree.io (e.g. xyzabcde) -->
+        <form class="card" id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+          <input type="hidden" name="_subject" value="New enquiry from the Valugen website" />
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true" />
+          <div class="field-row">
+            <div class="field">
+              <label for="name">Full name</label>
+              <input id="name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" required />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="phone">Phone <span class="opt">(optional)</span></label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" />
+            </div>
+            <div class="field">
+              <label for="topic">I'm enquiring about</label>
+              <select id="topic" name="topic">
+                <option>Product enquiry</option>
+                <option>Becoming a stockist</option>
+                <option>Manufacturer / distribution partnership</option>
+                <option>Feedback</option>
+                <option>Something else</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+          <label class="consent">
+            <input type="checkbox" id="consent" name="consent" value="yes" required />
+            I agree to Valugen using these details to respond to my enquiry. Please don't include personal medical information in your message.
+          </label>
+          <button type="submit" class="btn btn-primary" id="submit-btn">Send message</button>
+          <p class="form-status" id="form-status" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="#home" class="logo footer-logo" aria-label="Valugen home">
+            <img src="images/valugen-logo-white.png" alt="Valugen" width="79" height="46" />
+          </a>
+          <p style="margin:0;max-width:300px">UK reseller and distributor of vitamins, supplements and everyday healthcare products.</p>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#quality">Quality</a></li>
+            <li><a href="#partners">Partner with us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="disclaimer">
+        <p>Always read the label. If symptoms persist, speak to your pharmacist or GP. The information on this website is for general purposes only and is not a substitute for professional medical advice. Food supplements should not be used as a substitute for a varied, balanced diet and a healthy lifestyle. Brand names and trademarks belong to their respective owners. Report suspected side effects via the <a href="https://yellowcard.mhra.gov.uk/" target="_blank" rel="noopener">MHRA Yellow Card scheme</a>.<br /><br />[Company name] Ltd · Registered in England &amp; Wales No. [00000000] · Registered office: [address] · Licence No. [XXXXX]</p>
+        <p>© <span id="year"></span> Valugen. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Nav: border on scroll + mobile toggle
+    const nav = document.getElementById('nav');
+    const toggle = document.getElementById('menu-toggle');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 8), { passive: true });
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+    document.querySelectorAll('.nav-links a').forEach(a =>
+      a.addEventListener('click', () => { nav.classList.remove('open'); toggle.setAttribute('aria-expanded', false); })
+    );
+
+    // Highlight active section in nav
+    const links = [...document.querySelectorAll('.nav-links a')];
+    const sections = links.map(a => document.querySelector(a.getAttribute('href')));
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    sections.forEach(s => s && spy.observe(s));
+
+    // Slide-in animations as sections scroll into view
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      const groups = [
+        ['.hero-grid > div', 'from-left'],
+        ['.hero-grid > .feature-img', 'from-right'],
+        ['#about .feature-img', 'from-left'],
+        ['.about-copy', 'from-right'],
+        ['.section-head', ''],
+        ['.product-card', '', 0.1],
+        ['.q-card', '', 0.1],
+        ['.partner:nth-child(1)', 'from-left'],
+        ['.partner:nth-child(2)', 'from-right'],
+        ['.faq-list details', '', 0.06],
+        ['.contact-grid > div', 'from-left'],
+        ['.contact-grid > form', 'from-right'],
+      ];
+      const revealer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const el = e.target;
+          el.classList.add('in');
+          revealer.unobserve(el);
+          // Hand transforms back to hover effects once the slide-in has finished
+          el.addEventListener('transitionend', function done(ev) {
+            if (ev.target !== el || ev.propertyName !== 'transform') return;
+            el.classList.remove('reveal', 'in', 'from-left', 'from-right');
+            el.style.removeProperty('--rd');
+            el.removeEventListener('transitionend', done);
+          });
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+
+      groups.forEach(([sel, dir, stagger]) => {
+        document.querySelectorAll(sel).forEach((el, i) => {
+          el.classList.add('reveal');
+          if (dir) el.classList.add(dir);
+          if (stagger) el.style.setProperty('--rd', ((i % 3) * stagger * 1.5).toFixed(2) + 's');
+          revealer.observe(el);
+        });
+      });
+    }
+
+    // Contact form → Formspree (sends via fetch so the visitor stays on the page)
+    const form = document.getElementById('contact-form');
+    const status = document.getElementById('form-status');
+    const submitBtn = document.getElementById('submit-btn');
+    const show = (msg, kind) => { status.textContent = msg; status.className = 'form-status ' + kind; };
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      if (form.action.includes('YOUR_FORM_ID')) {
+        show('Draft: form not connected yet. Add your Formspree form ID to go live.', 'err');
+        return;
+      }
+      submitBtn.disabled = true; submitBtn.textContent = 'Sending…';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' }
+        });
+        if (res.ok) {
+          show("Thank you. Your message has been sent and we'll be in touch soon.", 'ok');
+          form.reset();
+        } else {
+          show('Sorry, something went wrong. Please try again or email us directly.', 'err');
+        }
+      } catch {
+        show('Sorry, something went wrong. Please check your connection and try again.', 'err');
+      } finally {
+        submitBtn.disabled = false; submitBtn.textContent = 'Send message';
+      }
+    });
+  </script>
+</body>
+</html>
