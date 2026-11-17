@@ -387,6 +387,33 @@
       .hero { padding: 28px 0 48px; }
       .band { padding: 48px 0; }
     }
+    /* Hero image carousel: desktop shows the blue image only */
+    .hero-track .slide-mobile, .hero-dots { display: none; }
+    @media (max-width: 980px) {
+      /* Phones/tablets: both images swipe side by side, About image hidden to avoid repeating it */
+      .about-img { display: none; }
+      .about-grid { gap: 0; }
+      .hero-track {
+        display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch; scrollbar-width: none;
+        padding: 4px 0 18px; margin-bottom: -6px;
+      }
+      .hero-track::-webkit-scrollbar { display: none; }
+      .hero-track .feature-img, .hero-track .slide-mobile {
+        display: block; flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always;
+      }
+      .hero-dots { display: flex; justify-content: center; gap: 4px; }
+      .hero-dots button {
+        width: 28px; height: 28px; padding: 0; border: 0; background: none; cursor: pointer;
+        display: grid; place-items: center;
+      }
+      .hero-dots button::after {
+        content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--hairline-input);
+        transition: width .25s, background .25s;
+      }
+      .hero-dots button[aria-current="true"]::after { width: 22px; border-radius: 4px; background: var(--primary); }
+    }
+
     /* Touch screens (iPads showing the full menu): finger-sized tap targets */
     @media (pointer: coarse) {
       .nav-links a { padding-top: 12px; padding-bottom: 12px; }
@@ -447,15 +474,26 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b7a75" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Dependable, competitive supply</li>
           </ul>
         </div>
-        <img class="feature-img" src="images/hero-range-blue.webp" width="1402" height="1122"
-             alt="Pharmalinea Hydramin+ Creatine Sticks, VITY Vitamin D3 and VPLab L-Carnitine 3000 on a display stand" />
+        <!-- Desktop: blue image only. Phones/tablets: swipeable carousel of both images -->
+        <div class="hero-media">
+          <div class="hero-track" id="hero-track">
+            <img class="feature-img" src="images/hero-range-blue.webp" width="1402" height="1122"
+                 alt="Pharmalinea Hydramin+ Creatine Sticks, VITY Vitamin D3 and VPLab L-Carnitine 3000 on a display stand" />
+            <img class="feature-img slide-mobile" src="images/hero-range-orange.webp" width="1402" height="1122" loading="lazy"
+                 alt="Valugen Vitamin C + Zinc Chewable Tablets and Candipure capsules on a display stand" />
+          </div>
+          <div class="hero-dots" id="hero-dots">
+            <button type="button" aria-label="Show image 1" aria-current="true"></button>
+            <button type="button" aria-label="Show image 2"></button>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ================= ABOUT ================= -->
     <section class="band band-soft" id="about">
       <div class="container about-grid">
-        <img class="feature-img" src="images/hero-range-orange.webp" width="1402" height="1122" loading="lazy"
+        <img class="feature-img about-img" src="images/hero-range-orange.webp" width="1402" height="1122" loading="lazy"
              alt="Valugen Vitamin C + Zinc Chewable Tablets and Candipure capsules on a display stand" />
         <div class="about-copy">
           <span class="eyebrow">About Valugen</span>
@@ -765,11 +803,40 @@
     }, { rootMargin: '-45% 0px -50% 0px' });
     sections.forEach(s => s && spy.observe(s));
 
+    // Hero image carousel (phones/tablets only; on desktop the track doesn't scroll)
+    (() => {
+      const track = document.getElementById('hero-track');
+      const dots = [...document.querySelectorAll('#hero-dots button')];
+      const slides = [...track.children];
+      const isCarousel = () => track.scrollWidth > track.clientWidth + 4;
+      const current = () => Math.round(track.scrollLeft / track.clientWidth);
+      const go = i => track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+
+      track.addEventListener('scroll', () => {
+        const i = current();
+        dots.forEach((d, n) => d.setAttribute('aria-current', n === i ? 'true' : 'false'));
+      }, { passive: true });
+      dots.forEach((d, i) => d.addEventListener('click', () => { stop(); go(i); }));
+
+      // Auto-advance every 4.5s; stops for good once the visitor swipes or taps a dot
+      let timer = null;
+      const stop = () => { clearInterval(timer); timer = null; };
+      const start = () => {
+        if (timer || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        timer = setInterval(() => {
+          if (!isCarousel() || document.hidden) return;
+          go((current() + 1) % slides.length);
+        }, 4500);
+      };
+      ['touchstart', 'pointerdown', 'wheel'].forEach(ev => track.addEventListener(ev, stop, { passive: true }));
+      start();
+    })();
+
     // Slide-in animations as sections scroll into view
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
       const groups = [
         ['.hero-grid > div', 'from-left'],
-        ['.hero-grid > .feature-img', 'from-right'],
+        ['.hero-grid > .hero-media', 'from-right'],
         ['#about .feature-img', 'from-left'],
         ['.about-copy', 'from-right'],
         ['.section-head', ''],
