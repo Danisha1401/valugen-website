@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a3540" />
   <title>Valugen — UK Distributor of Vitamins &amp; Supplements</title>
   <meta name="description" content="Valugen is a UK distributor of vitamins, food supplements and everyday healthcare products, supplying pharmacies and retailers." />
   <!-- Temporary favicon: replace with the logo (Image 1) later -->
@@ -183,7 +184,7 @@
       background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--radius-lg);
       overflow: hidden; transition: box-shadow .2s, transform .2s;
     }
-    .product-card:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); }
+    @media (hover: hover) { .product-card:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); } }
     .product-card { display: flex; flex-direction: column; }
     .product-media {
       aspect-ratio: 1 / 1; background: #fff; border-bottom: 1px solid var(--hairline);
@@ -191,7 +192,7 @@
     }
     .product-media img { width: 100%; height: 100%; object-fit: contain; transition: transform .3s; }
     .product-media img.tall { padding: 24px 0; }
-    .product-card:hover .product-media img { transform: scale(1.03); }
+    @media (hover: hover) { .product-card:hover .product-media img { transform: scale(1.03); } }
     .product-body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
     .product-body .tags { margin-top: auto; }
     .brand { font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); margin-bottom: 6px; }
@@ -335,6 +336,71 @@
     .reveal.from-left  { --rx: -56px; --ry: 0; }
     .reveal.from-right { --rx: 56px;  --ry: 0; }
     .reveal.in { opacity: 1; transform: none; }
+    /* Never let off-screen slide-ins widen the page (stops sideways scrolling on phones) */
+    html, body { overflow-x: hidden; }
+    @supports (overflow: clip) { html, body { overflow-x: clip; } }
+
+    /* ============================================================
+       EXTRA RESPONSIVE POLISH (all phones, tablets, notches)
+       ============================================================ */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    p, li, span, a, h1, h2, h3 { overflow-wrap: break-word; }
+    /* Keep content clear of the notch / rounded corners in landscape */
+    .container {
+      padding-left: max(24px, env(safe-area-inset-left));
+      padding-right: max(24px, env(safe-area-inset-right));
+    }
+    footer { padding-bottom: max(32px, env(safe-area-inset-bottom)); }
+    /* Bigger, easier-to-tap consent checkbox */
+    .consent input { width: 20px; height: 20px; margin-top: 0; flex: none; accent-color: var(--primary); }
+    @media (max-width: 980px) {
+      /* Menu scrolls if the screen is short (phones in landscape) */
+      .nav-links { max-height: calc(100vh - var(--nav-h)); max-height: calc(100dvh - var(--nav-h)); overflow-y: auto; }
+      .nav-links a { padding-left: max(14px, env(safe-area-inset-left)); }
+    }
+    @media (max-width: 560px) {
+      :root { --nav-h: 64px; }
+      .logo img { height: 40px; }
+      .footer-logo img { height: 36px; }
+      .container {
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+      }
+      .hero { padding: 32px 0 56px; }
+      .band { padding: 56px 0; }
+      .section-head { margin-bottom: 32px; }
+      .lead { font-size: 17px; }
+      .product-body { padding: 18px 18px 22px; }
+      .q-card, .partner { padding: 22px; }
+      .feature-img { border-radius: var(--radius-md); }
+      .btn { min-height: 46px; }
+    }
+    @media (max-width: 400px) {
+      h1 { font-size: 32px; }
+      h2 { font-size: 27px; }
+      /* Stack hero buttons full-width on small phones */
+      .hero-actions { flex-direction: column; }
+      .hero-actions .btn { width: 100%; justify-content: center; }
+    }
+    /* Phones held sideways: less vertical padding so content fits */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .hero { padding: 28px 0 48px; }
+      .band { padding: 48px 0; }
+    }
+    /* Touch screens (iPads showing the full menu): finger-sized tap targets */
+    @media (pointer: coarse) {
+      .nav-links a { padding-top: 12px; padding-bottom: 12px; }
+      .nav-cta { min-height: 44px; }
+    }
+    /* Large desktops: a little more breathing room */
+    @media (min-width: 1600px) {
+      :root { --container: 1280px; }
+    }
+
+    @media (max-width: 768px) {
+      .reveal.from-left  { --rx: -28px; }
+      .reveal.from-right { --rx: 28px; }
+    }
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; transition: none; }
     }
